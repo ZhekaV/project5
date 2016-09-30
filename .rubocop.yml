@@ -1,0 +1,68 @@
+# Common configuration.
+AllCops:
+  # Include common Ruby source files.
+  # Include:
+    # - '**/*.gemspec'
+    # - '**/*.podspec'
+    # - '**/*.jbuilder'
+    # - '**/*.rake'
+    # - '**/*.opal'
+    # - '**/config.ru'
+    # - '**/Gemfile'
+    # - '**/Rakefile'
+    # - '**/Capfile'
+    # - '**/Guardfile'
+    # - '**/Podfile'
+    # - '**/Thorfile'
+    # - '**/Vagrantfile'
+    # - '**/Berksfile'
+    # - '**/Cheffile'
+    # - '**/Vagabondfile'
+  Exclude:
+    - 'db/schema.rb'
+
+Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 150
+
+Metrics/AbcSize:
+  # The ABC size is a calculated magnitude, so this number can be a Fixnum or
+  # a Float.
+  Max: 30
+
+Metrics/ClassLength:
+  CountComments: false  # count full line comments?
+  Max: 200
+
+Metrics/ModuleLength:
+  CountComments: false  # count full line comments?
+  Max: 200
+
+Metrics/MethodLength:
+  CountComments: false  # count full line comments?
+  Max: 20
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  # Checks the style of children definitions at classes and modules.
+  #
+  # Basically there are two different styles:
+  #
+  # `nested` - have each child on a separate line
+  #   class Foo
+  #     class Bar
+  #     end
+  #   end
+  #
+  # `compact` - combine definitions as much as possible
+  #   class Foo::Bar
+  #   end
+  #
+  # The compact style is only forced, for classes / modules with one child.
+  EnforcedStyle: compact
+  SupportedStyles:
+    - nested
+    - compact
