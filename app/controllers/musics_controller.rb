@@ -10,7 +10,7 @@ class MusicsController < ApplicationController
   def update
     respond_to do |format|
       if @music.update(viewed: @music.viewed ? false : true)
-        format.json { render nothing: true, status: :ok }
+        format.json { head :ok }
       end
     end
   end

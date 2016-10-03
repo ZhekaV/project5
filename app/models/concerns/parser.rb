@@ -1,7 +1,7 @@
 module Parser
   require 'open-uri'
 
-  attr_accessor :parse_url, :parse_pages_from, :parse_pages_till, :records, :existed_records
+  attr_accessor :parse_url, :parse_pages_from, :parse_pages_till, :records, :fe_ids
 
   def parse
     return false if parse_url.blank? || parse_pages_from.blank? || parse_pages_till.blank?
@@ -13,26 +13,39 @@ module Parser
   private
 
   def through_the_pages
-    self.records = []
-    (parse_pages_from..parse_pages_till).each do |n|
-      page = Nokogiri::HTML(open("#{parse_url}?p=#{n}#info"))
-      page.css("div#content div[class='post']").each do |block|
-        records << info_from(block)
+    (parse_pages_from..parse_pages_till).to_a.in_groups_of(20) do |group|
+      reset_records
+      group.each do |n|
+        parse_page(n)
       end
-      sleep 2 if (parse_pages_from..parse_pages_till).count > 20
+      import_to_db
     end
-    import_to_db
   end
 
-  def info_from(block)
-    return if prohibited?(block)
+  def reset_records
+    self.records = []
+    self.fe_ids = []
+  end
+
+  def parse_page(n)
+    page = Nokogiri::HTML(open("#{parse_url}?p=#{n}#info"))
+    page.css("div#content div[class='post']").each do |block|
+      music_record = music_record_from(block)
+      next unless music_record
+      records << music_record
+      fe_ids << music_record[:fe_id]
+    end
+  end
+
+  def music_record_from(block)
+    fe_id = fe_id_and_check(block)
+    return unless fe_id
     info = {}
     block.css('table tr').each do |row|
       info[row.css('td').first.text.delete(':').parameterize.underscore.to_sym] = row.css('td').last.text
     end
     info[:released] = DateTime.strptime(info[:released], '%d.%m.%Y')
     return unless filtered(info)
-    fe_id = block.css("div[class='blc-image'] a").first['href'].delete('/').to_i
     Music.new(
       fe_id:        fe_id,
       title:        block.css("div[class='post-title'] h3").text,
@@ -47,8 +60,10 @@ module Parser
     )
   end
 
-  def prohibited?(block)
-    block.css("div[class='post-text']").blank?
+  def fe_id_and_check(block)
+    return false if block.css("div[class='post-text']").blank?
+    fe_id = block.css("div[class='blc-image'] a").first['href'].delete('/').to_i
+    fe_ids.include?(fe_id) ? false : fe_id
   end
 
   def filtered(info)
