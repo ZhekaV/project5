@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161002195009) do
+ActiveRecord::Schema.define(version: 20161003132139) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 20161002195009) do
     t.date     "released"
     t.string   "res_type"
     t.float    "score",       default: 0.0
+    t.index ["fe_id"], name: "index_musics_on_fe_id", unique: true, using: :btree
   end
 
 end

@@ -16,7 +16,7 @@ class MusicsController < ApplicationController
   end
 
   def parse
-    ParserJob.new(musics_params).perform_now
+    ParserJob.perform_later(musics_params.to_h)
     redirect_back(fallback_location: root_path)
   end
 

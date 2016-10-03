@@ -1,73 +1,54 @@
 module Parser
   require 'open-uri'
 
-  attr_accessor :parse_url, :parse_pages
+  attr_accessor :parse_url, :parse_pages, :records, :existed_records
 
   def parse
     return false if parse_url.blank? || parse_pages.blank?
-    titles = parsing
-    send_message unless user.blank?
-    save_results titles
+    through_the_pages
   end
 
   private
 
-  def parsing
-    records = []
+  def through_the_pages
+    self.records = []
     (1..parse_pages.to_i).each do |n|
       page = Nokogiri::HTML(open("#{parse_url}?p=#{n}#info"))
       page.css("div#content div[class='post']").each do |block|
-        info = get_info(block)
-        records << info unless info.nil?
+        records << info_from(block)
       end
     end
-
-    to_db(records)
+    import_to_db
   end
 
-  def send_message
-    message = {
-      channel: "/messages/#{user.auth_token}",
-      data: { type: :parser, status: :ok },
-      ext: { auth_token: FAYE_TOKEN }
-    }
-    uri = URI.parse('http://localhost:9292/faye')
-    Net::HTTP.post_form(uri, message: message.to_json)
-  end
-
-  def save_results(titles)
-    titles # TODO: save to redis so user can see it on temp page
-  end
-
-  def get_info(block)
-    return if block_denied(block)
+  def info_from(block)
+    return if prohibited?(block)
     fe_id = block.css("div[class='blc-image'] a").first['href'].delete('/').to_i
     info = {}
     block.css('table tr').each do |row|
       info[row.css('td').first.text.delete(':').parameterize.underscore.to_sym] = row.css('td').last.text
     end
     info[:released] = DateTime.strptime(info[:released], '%d.%m.%Y')
-    return unless filter(info)
+    return unless filtered(info)
     Music.new(
-      fe_id: fe_id,
-      title: block.css("div[class='post-title'] h3").text,
-      artwork_url: block.css("div[class='blc-image'] img").first['src'],
-      score: block.css("span[id='rate-r-#{fe_id}']").text.to_f,
-      votes: block.css("span[id='rate-v-#{fe_id}']").text.to_i,
-      posted: posted_date(block.css("div[class='post-title']").css("div[class='post-info'] span").first.text),
-      style: info[:style],
-      label: info[:label],
-      released: info[:released],
-      res_type: info[:type],
-      version: 1
+      fe_id:        fe_id,
+      title:        block.css("div[class='post-title'] h3").text,
+      artwork_url:  block.css("div[class='blc-image'] img").first['src'],
+      score:        block.css("span[id='rate-r-#{fe_id}']").text.to_f,
+      votes:        block.css("span[id='rate-v-#{fe_id}']").text.to_i,
+      posted:       posted_date(block.css("div[class='post-title']").css("div[class='post-info'] span").first.text),
+      style:        info[:style],
+      label:        info[:label],
+      released:     info[:released],
+      res_type:     info[:type]
     )
   end
 
-  def block_denied(block)
+  def prohibited?(block)
     block.css("div[class='post-text']").blank?
   end
 
-  def filter(info)
+  def filtered(info)
     info[:released].year >= 2014 && info[:type] != 'Radioshow'
   end
 
@@ -100,25 +81,33 @@ module Parser
     }
   end
 
-  def to_db(records)
-    return nil, nil if records.blank?
-    new = []
-    new_titles = []
-    exist_titles = []
+  def import_to_db
+    self.records = records.try(:compact)
+    return if records.blank?
+    filter_existed
+    Music.import records
+    # TODO: update existed_records
+  end
 
-    records.each do |r|
-      exist = Music.find_by_title(r.title)
-      if exist.blank?
-        new << r
-        new_titles << r.title
-      else
-        exist.update_attributes(rating: r.rating, score: r.score, votes: r.votes)
-        exist_titles << exist.title
+  def filter_existed
+    existed = Music.where(title: records.map(&:title)).pluck(:title)
+    return if existed.blank?
+    self.existed_records = []
+    records.delete_if do |h|
+      if existed.include? h[:title]
+        existed_records << h
+        true
       end
     end
-
-    Music.import new
-
-    [new_titles, exist_titles]
   end
+
+  # def send_message
+  #   message = {
+  #     channel: "/messages/#{user.auth_token}",
+  #     data: { type: :parser, status: :ok },
+  #     ext: { auth_token: FAYE_TOKEN }
+  #   }
+  #   uri = URI.parse('http://localhost:9292/faye')
+  #   Net::HTTP.post_form(uri, message: message.to_json)
+  # end
 end

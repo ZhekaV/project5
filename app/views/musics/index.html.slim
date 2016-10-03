@@ -1,6 +1,6 @@
 = simple_form_for :musics, url: parse_musics_path, method: :post do |f|
   = f.input :parse_url, readonly: true, input_html: { value: 'http://freake.ru/music/style/trance' }
-  = f.input :parse_pages, input_html: { value: 10 }
+  = f.input :parse_pages, input_html: { value: 1 }
   = f.button :submit, 'Parse'
 
 = datagrid_form_for @musics_grid, url: musics_path

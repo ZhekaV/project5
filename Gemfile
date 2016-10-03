@@ -16,6 +16,8 @@ gem 'slim'
 gem 'datagrid'
 gem 'kaminari'
 gem 'simple_form'
+gem 'activerecord-import'
+gem 'foreman'
 
 gem 'sidekiq'
 gem 'sinatra', require: false
