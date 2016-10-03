@@ -15,6 +15,7 @@ gem 'redis-namespace'
 gem 'slim'
 gem 'datagrid'
 gem 'kaminari'
+gem 'simple_form'
 
 gem 'sidekiq'
 gem 'sinatra', require: false
