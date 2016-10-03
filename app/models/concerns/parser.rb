@@ -1,10 +1,12 @@
 module Parser
   require 'open-uri'
 
-  attr_accessor :parse_url, :parse_pages, :records, :existed_records
+  attr_accessor :parse_url, :parse_pages_from, :parse_pages_till, :records, :existed_records
 
   def parse
-    return false if parse_url.blank? || parse_pages.blank?
+    return false if parse_url.blank? || parse_pages_from.blank? || parse_pages_till.blank?
+    self.parse_pages_from = parse_pages_from.to_i
+    self.parse_pages_till = parse_pages_till.to_i
     through_the_pages
   end
 
@@ -12,24 +14,25 @@ module Parser
 
   def through_the_pages
     self.records = []
-    (1..parse_pages.to_i).each do |n|
+    (parse_pages_from..parse_pages_till).each do |n|
       page = Nokogiri::HTML(open("#{parse_url}?p=#{n}#info"))
       page.css("div#content div[class='post']").each do |block|
         records << info_from(block)
       end
+      sleep 2 if (parse_pages_from..parse_pages_till).count > 20
     end
     import_to_db
   end
 
   def info_from(block)
     return if prohibited?(block)
-    fe_id = block.css("div[class='blc-image'] a").first['href'].delete('/').to_i
     info = {}
     block.css('table tr').each do |row|
       info[row.css('td').first.text.delete(':').parameterize.underscore.to_sym] = row.css('td').last.text
     end
     info[:released] = DateTime.strptime(info[:released], '%d.%m.%Y')
     return unless filtered(info)
+    fe_id = block.css("div[class='blc-image'] a").first['href'].delete('/').to_i
     Music.new(
       fe_id:        fe_id,
       title:        block.css("div[class='post-title'] h3").text,
@@ -52,15 +55,16 @@ module Parser
     info[:released].year >= 2014 && info[:type] != 'Radioshow'
   end
 
-  def posted_date(string)
-    string = string.gsub('в ', '')
+  def posted_date(orig_string)
+    string = orig_string.gsub('в ', '')
     a = string.split(' ')
     time = a.last.split(':')
     if %w(Сегодня Вчера).include? a[0]
       date = (a[0] == 'Сегодня' ? Date.today : Date.yesterday)
       Time.local(date.year, date.month, date.day, time[0], time[1])
     else
-      Time.local(a[2].to_i, months[a[1]], a[0])
+      year = orig_string.include?('в ') ? Time.now.year : a[2].to_i
+      Time.local(year, months[a[1]], a[0])
     end
   end
 
@@ -82,23 +86,12 @@ module Parser
   end
 
   def import_to_db
-    self.records = records.try(:compact)
     return if records.blank?
-    filter_existed
-    Music.import records
-    # TODO: update existed_records
+    Music.import records.compact, on_duplicate_key_update: { conflict_target: [:fe_id], columns: duplicate_update_columns }
   end
 
-  def filter_existed
-    existed = Music.where(title: records.map(&:title)).pluck(:title)
-    return if existed.blank?
-    self.existed_records = []
-    records.delete_if do |h|
-      if existed.include? h[:title]
-        existed_records << h
-        true
-      end
-    end
+  def duplicate_update_columns
+    [:title, :artwork_url, :score, :posted, :style, :label, :released, :res_type, :votes]
   end
 
   # def send_message

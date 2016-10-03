@@ -27,6 +27,6 @@ class MusicsController < ApplicationController
   end
 
   def musics_params
-    params.require(:musics).permit(:parse_url, :parse_pages)
+    params.require(:musics).permit(:parse_url, :parse_pages_from, :parse_pages_till)
   end
 end
