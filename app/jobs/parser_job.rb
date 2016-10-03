@@ -1,7 +1,7 @@
-class ParserJob < ActiveJob::Base
+class ParserJob < SidekiqJob
   queue_as :parser
 
-  # def perform(params)
-  #   Parser.new(params).parse_from_fe
-  # end
+  def perform(params)
+    Music.new(params).parse
+  end
 end

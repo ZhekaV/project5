@@ -16,6 +16,7 @@ class MusicsController < ApplicationController
   end
 
   def parse
+    ParserJob.new(musics_params).perform_now
     redirect_back(fallback_location: root_path)
   end
 
@@ -23,5 +24,9 @@ class MusicsController < ApplicationController
 
   def set_music
     @music = Music.find(params[:id])
+  end
+
+  def musics_params
+    params.require(:musics).permit(:parse_url, :parse_pages)
   end
 end
