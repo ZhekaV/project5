@@ -27,6 +27,7 @@ group :development do
   gem 'listen'
   gem 'pronto'
   gem 'pronto-flay', require: false
+  gem 'pronto-rails_best_practices', require: false
   gem 'pronto-rubocop', require: false
   gem 'pry-rails'
   gem 'rubocop', require: false
