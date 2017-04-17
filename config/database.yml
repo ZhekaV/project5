@@ -5,6 +5,7 @@ default: &default
   pool: 5
   username: <%= ENV['DB_USERNAME'] %>
   password: <%= ENV['DB_PASSWORD'] %>
+  # host: 172.18.0.1
 
 development:
   <<: *defaults
@@ -14,11 +15,3 @@ test:
 
 production:
   <<: *defaults
-
-# adapter: postgresql
-# encoding: unicode
-# database: project5_development
-# pool: 5
-# username: zheka
-# password:
-# host: 172.18.0.1
