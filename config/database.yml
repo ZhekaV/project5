@@ -5,7 +5,8 @@ defaults: &defaults
   pool: 5
   username: <%= ENV['DB_USERNAME'] %>
   password: <%= ENV['DB_PASSWORD'] %>
-  # host: 172.18.0.1
+  host: postgres
+  port: 5432
 
 development:
   <<: *defaults
