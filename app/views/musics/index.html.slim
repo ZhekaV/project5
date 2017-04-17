@@ -3,8 +3,9 @@
   = f.input :parse_pages_from, input_html: { value: 1 }
   = f.input :parse_pages_till, input_html: { value: 10 }
   = f.button :submit, 'Parse'
-
+hr
 = datagrid_form_for @musics_grid, url: musics_path
 .total= "Total: #{@musics_grid.assets.total_count}"
+hr
 = datagrid_table(@musics_grid)
 = paginate @musics_grid.assets

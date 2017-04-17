@@ -11,10 +11,11 @@ gem 'jquery-rails'
 gem 'kaminari'
 gem 'pg'
 gem 'puma'
-gem 'redis'
 gem 'redis-namespace'
+gem 'redis-rails'
 gem 'sass-rails'
 gem 'sidekiq'
+gem 'sidekiq-scheduler'
 gem 'simple_form'
 gem 'sinatra', require: false
 gem 'slim'
@@ -31,6 +32,7 @@ group :development do
   gem 'pronto-rubocop', require: false
   gem 'pry-rails'
   gem 'rubocop', require: false
+  gem 'rubycritic'
   gem 'spring'
   gem 'spring-watcher-listen'
 end
