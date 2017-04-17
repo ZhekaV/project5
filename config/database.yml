@@ -5,8 +5,4 @@ development: &default
   pool: 5
   username: zheka
   password:
-  # host: db
-
-# test:
-#   <<: *default
-#   database: project5_test
+  # host: 172.18.0.1
