@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   root 'musics#index'
 
-  resources :musics, only: [:index, :update] do
+  resources :musics, only: %i(index update) do
     post 'parse', to: 'musics#parse', on: :collection
   end
 end
