@@ -7,15 +7,19 @@ MAINTAINER Ievgen Vigura <zhekavigura@gmail.com>
 # - nodejs: Compile assets
 # - libpq-dev: Communicate with postgres through the postgres gem
 # - postgresql-client-9.4: In case you want to talk directly to postgres
-RUN apt-get update && apt-get install -qq -y build-essential nodejs libpq-dev cmake mc --fix-missing --no-install-recommends
+RUN apt-get update && apt-get install -qq -y build-essential nodejs libpq-dev cmake mc vim --fix-missing --no-install-recommends
 
-ENV INSTALL_PATH /project5
+ENV APP_HOME /project5
 
-RUN mkdir -p $INSTALL_PATH
-WORKDIR $INSTALL_PATH
+RUN mkdir -p $APP_HOME
+WORKDIR $APP_HOME
 
-COPY Gemfile $INSTALL_PATH/Gemfile
-COPY Gemfile.lock $INSTALL_PATH/Gemfile.lock
+COPY Gemfile $APP_HOME/Gemfile
+COPY Gemfile.lock $APP_HOME/Gemfile.lock
+
+ENV BUNDLE_GEMFILE=$APP_HOME/Gemfile \
+    BUNDLE_JOBS=2 \
+    BUNDLE_PATH=/bundle
 
 RUN bundle install
 
@@ -25,6 +29,6 @@ COPY . .
 RUN bundle exec rake RAILS_ENV=production DATABASE_URL=postgresql://user:pass@127.0.0.1/dbname SECRET_TOKEN=pickasecuretoken assets:precompile
 
 # Expose a volume so that nginx will be able to read in assets in production.
-VOLUME ["$INSTALL_PATH/public"]
+VOLUME ["$APP_HOME/public"]
 
-CMD bundle exec rails s
+CMD bundle exec rails s -p 3000 -b 0.0.0.0
