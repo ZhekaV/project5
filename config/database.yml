@@ -1,8 +1,24 @@
-development: &default
+default: &default
   adapter: postgresql
   encoding: unicode
-  database: project5_development
+  database: <%= "#{ENV['DB_NAME']}_#{ENV['RAILS_ENV']}" %>
   pool: 5
-  username: zheka
-  password:
-  # host: 172.18.0.1
+  username: <%= ENV['DB_USERNAME'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+# adapter: postgresql
+# encoding: unicode
+# database: project5_development
+# pool: 5
+# username: zheka
+# password:
+# host: 172.18.0.1
