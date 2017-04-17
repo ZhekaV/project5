@@ -106,7 +106,7 @@ module Parser
   end
 
   def duplicate_update_columns
-    [:title, :artwork_url, :score, :posted, :style, :label, :released, :res_type, :votes]
+    %i(title artwork_url score posted style label released res_type votes)
   end
 
   # def send_message
