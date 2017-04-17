@@ -2,12 +2,9 @@ FROM ruby:2.4
 
 MAINTAINER Ievgen Vigura <zhekavigura@gmail.com>
 
-# Install dependencies:
-# - build-essential: To ensure certain gems can be compiled
-# - nodejs: Compile assets
-# - libpq-dev: Communicate with postgres through the postgres gem
-# - postgresql-client-9.4: In case you want to talk directly to postgres
-RUN apt-get update && apt-get install -qq -y build-essential nodejs libpq-dev cmake mc vim --fix-missing --no-install-recommends
+RUN apt-get update && apt-get install -y build-essential nodejs libpq-dev cmake mc vim wget --fix-missing
+RUN apt-get install -y postgresql-client --no-install-recommends
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV APP_HOME /project5
 
@@ -31,4 +28,4 @@ RUN bundle exec rake RAILS_ENV=production DATABASE_URL=postgresql://user:pass@12
 # Expose a volume so that nginx will be able to read in assets in production.
 VOLUME ["$APP_HOME/public"]
 
-CMD bundle exec rails s -p 3000 -b 0.0.0.0
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
