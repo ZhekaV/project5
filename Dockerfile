@@ -2,7 +2,7 @@ FROM ruby:2.4
 
 MAINTAINER Ievgen Vigura <zhekavigura@gmail.com>
 
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs mc locales cmake
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs mc locales cmake postgresql-client --no-install-recommends
 
 # Use en_US.UTF-8 as our locale
 # RUN locale-gen en_US.UTF-8
