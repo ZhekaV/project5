@@ -3,7 +3,7 @@ version: '2'
 services:
 
   postgres:
-    image: postgres:9.6.2
+    image: postgres:9
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mysecretpassword
@@ -16,7 +16,7 @@ services:
       - project5-postgres:/var/lib/postgresql/data
 
   redis:
-    image: redis:3.0.7
+    image: redis:4
     ports:
       - '6379:6379'
     volumes:
