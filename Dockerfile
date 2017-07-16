@@ -35,3 +35,8 @@ ENTRYPOINT ["bundle", "exec"]
 # tell the Rails dev server to bind to all interfaces by
 # default.
 CMD ["rails", "s", "-b", "0.0.0.0"]
+
+
+
+
+# psql -h postgres -p 5432 -U postgres project5_development
