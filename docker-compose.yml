@@ -41,6 +41,7 @@ services:
     links:
       - postgres
       - redis
+      - project5
     volumes:
       - .:/project5
     env_file:
