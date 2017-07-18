@@ -41,3 +41,8 @@ CMD ["rails", "s", "-b", "0.0.0.0"]
 
 # psql -h postgres -p 5432 -U postgres project5_development
 # docker-compose run project5 bundle update
+
+# docker exec -it project5_project5_1 bash
+
+# docker stop $(docker ps -a -q)
+# docker rm $(docker ps -a -q)
