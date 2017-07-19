@@ -19,7 +19,7 @@ ENV BUNDLE_PATH /box
 
 COPY Gemfile ./
 COPY Gemfile.lock ./
-RUN bundle install --jobs 20 --retry 5
+RUN bundle check || bundle install --jobs 20 --retry 5
 
 COPY . ./
 
