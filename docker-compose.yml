@@ -22,6 +22,11 @@ services:
     volumes:
       - project5-redis:/var/lib/redis/data
 
+  box:
+    image: busybox
+    volumes:
+      - /project5-box
+
   project5:
     build: .
     command: rails s -b 0.0.0.0
@@ -32,6 +37,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - box
     env_file:
       - .project5.env
 
@@ -44,6 +50,8 @@ services:
       - project5
     volumes:
       - .:/project5
+    depends_on:
+      - project5
     env_file:
       - .project5.env
 
@@ -51,3 +59,4 @@ volumes:
 
   project5-postgres:
   project5-redis:
+  project5-box:

@@ -15,6 +15,8 @@ ENV APP_HOME /project5
 RUN mkdir -p $APP_HOME
 WORKDIR $APP_HOME
 
+ENV BUNDLE_PATH /box
+
 COPY Gemfile ./
 COPY Gemfile.lock ./
 RUN bundle install --jobs 20 --retry 5
