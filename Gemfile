@@ -23,6 +23,10 @@ gem 'turbolinks'
 gem 'uglifier'
 
 group :development do
+  gem 'rack-mini-profiler', require: false
+  gem 'memory_profiler'
+  gem 'stackprof'
+
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'listen'
