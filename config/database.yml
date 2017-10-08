@@ -2,10 +2,10 @@ defaults: &defaults
   adapter: postgresql
   encoding: unicode
   database: <%= "#{ENV['DB_NAME']}_#{ENV['RAILS_ENV']}" %>
-  pool: 5
+  pool: <%= ENV['DB_POOL'] %>
   username: <%= ENV['DB_USERNAME'] %>
   password: <%= ENV['DB_PASSWORD'] %>
-  host: postgres
+  host: <%= ENV['DB_HOST'] %>
   port: 5432
 
 development:

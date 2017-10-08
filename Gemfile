@@ -1,5 +1,10 @@
 source 'https://rubygems.org'
 
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?('/')
+  "https://github.com/#{repo_name}.git"
+end
+
 gem 'rails'
 
 gem 'activerecord-import'
@@ -11,7 +16,6 @@ gem 'jquery-rails'
 gem 'kaminari'
 gem 'pg'
 gem 'puma'
-gem 'redis-namespace'
 gem 'redis-rails'
 gem 'sass-rails'
 gem 'sidekiq'
@@ -23,8 +27,8 @@ gem 'turbolinks'
 gem 'uglifier'
 
 group :development do
-  gem 'rack-mini-profiler', require: false
   gem 'memory_profiler'
+  gem 'rack-mini-profiler', require: false
   gem 'stackprof'
 
   gem 'better_errors'

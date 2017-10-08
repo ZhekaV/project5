@@ -1,3 +1,3 @@
 :queues:
-  - parser
   - default
+  - parser

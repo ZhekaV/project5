@@ -1,9 +1,18 @@
-version: '2'
+version: '3'
 
 services:
 
-  postgres:
+  project5_box:
+    image: busybox
+    container_name: project5_box
+    # restart: always
+    volumes:
+      - /project5-box
+
+  project5_postgres:
     image: postgres:9
+    container_name: project5_postgres
+    # restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mysecretpassword
@@ -15,48 +24,43 @@ services:
     volumes:
       - project5-postgres:/var/lib/postgresql/data
 
-  redis:
+  project5_redis:
     image: redis:4
+    container_name: project5_redis
+    # restart: always
     ports:
       - '6379:6379'
     volumes:
       - project5-redis:/var/lib/redis/data
 
-  box:
-    image: busybox
-    volumes:
-      - /project5-box
-
-  project5:
+  project5_backend:
+    container_name: project5_backend
     build: .
-    command: rails s -b 0.0.0.0
-    volumes:
-      - .:/project5
+    env_file:
+      - .env
+    command: bash -c "./start.sh"
+    # restart: always
     ports:
       - '3000:3000'
-    depends_on:
-      - postgres
-      - redis
-      - box
-    env_file:
-      - .project5.env
-
-  sidekiq:
-    build: .
-    command: sidekiq -C config/sidekiq.yml
-    links:
-      - postgres
-      - redis
-      - project5
     volumes:
       - .:/project5
     depends_on:
-      - project5
+      - project5_box
+      - project5_postgres
+      - project5_redis
+
+  project5_sidekiq:
+    container_name: project5_sidekiq
+    build: .
+    command: sidekiq -C config/sidekiq.yml
+    # restart: always
     env_file:
-      - .project5.env
+      - .env
+    depends_on:
+      - project5_backend
 
 volumes:
 
+  project5-box:
   project5-postgres:
   project5-redis:
-  project5-box:

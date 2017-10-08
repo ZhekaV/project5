@@ -16,22 +16,22 @@ ActiveRecord::Schema.define(version: 20161003132139) do
   enable_extension "plpgsql"
 
   create_table "musics", force: :cascade do |t|
-    t.string   "style"
+    t.string "style"
     t.datetime "posted"
-    t.string   "title"
-    t.string   "url"
-    t.integer  "rating",      default: 0
-    t.string   "artwork_url"
-    t.boolean  "viewed",      default: false
+    t.string "title"
+    t.string "url"
+    t.integer "rating", default: 0
+    t.string "artwork_url"
+    t.boolean "viewed", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "fe_id"
-    t.integer  "votes",       default: 0
-    t.string   "label"
-    t.date     "released"
-    t.string   "res_type"
-    t.float    "score",       default: 0.0
-    t.index ["fe_id"], name: "index_musics_on_fe_id", unique: true, using: :btree
+    t.integer "fe_id"
+    t.integer "votes", default: 0
+    t.string "label"
+    t.date "released"
+    t.string "res_type"
+    t.float "score", default: 0.0
+    t.index ["fe_id"], name: "index_musics_on_fe_id", unique: true
   end
 
 end
