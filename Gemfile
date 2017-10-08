@@ -43,4 +43,9 @@ group :development do
   gem 'rubycritic'
   gem 'spring'
   gem 'spring-watcher-listen'
+
+  # gem 'bullet'
+  # gem 'dotenv-rails'
+  # gem 'letter_opener'
+  # gem 'rails-erd'
 end
