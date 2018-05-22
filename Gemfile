@@ -31,8 +31,8 @@ group :development do
   gem 'rack-mini-profiler', require: false
   gem 'stackprof'
 
-  gem 'better_errors'
-  gem 'binding_of_caller'
+  # gem 'better_errors'
+  # gem 'binding_of_caller'
   gem 'listen'
   gem 'pronto'
   gem 'pronto-flay', require: false
@@ -40,7 +40,7 @@ group :development do
   gem 'pronto-rubocop', require: false
   gem 'pry-rails'
   gem 'rubocop', require: false
-  gem 'rubycritic'
+  # gem 'rubycritic'
   gem 'spring'
   gem 'spring-watcher-listen'
 
